@@ -17,44 +17,42 @@ int main() {
 	printf("mash-2>");
 	fgets(cmd2, sizeof(cmd2), stdin);
 	
+	
 	printf("mash-3>");
 	fgets(cmd3, sizeof(cmd3), stdin);
-
+	
 	printf("filename>");
-	fgets(filename, sizeof(filename), stdin);
+	fscanf(stdin, "%s", filename);
 
 	
 	char file[255] = "test.txt";	
 
 	//each array needs to be pointing to an array of strings, which end w/ the file name then w/ null
 
-	printf("cmd 1: %s", cmd1);
-	printf("cmd 2: %s", cmd2);
-	printf("cmd 3: %s", cmd3);
-	printf("filename: %s", filename);
+	printf("cmd 1: %s\n", cmd1);
+	printf("cmd 2: %s\n", cmd2);
+	printf("cmd 3: %s\n", cmd3);
+	printf("filename: %s\n", filename);
 	
 
 	//iterate over char array
 
 	int i = 0; 
 	token = strtok(cmd1, " ");
-
+	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		command1[i] = token;
-		i = i + 1; 
-		token = strtok(NULL, " "); 
-		token = strtok(token, "\n");
+		i++; 
+		token = strtok(NULL, " ");
+		printf("Token grabbed: %s\n", token);
 	} 
-
-	command1[i] ="\0";
-	token = strtok(filename, "\n");
-	command1[i--] = token;
-
+	i--;
+       	command1[i] = filename;
 
 	printf("%s\n", command1[0]);
 	printf("%s\n", command1[1]);
-	printf("%s\n", command1[2]);
-	printf("%s\n", command1[3]);
+        printf("%s\n", command1[2]);
+	printf("File name?: %s\n", command1[3]);
 
 
 	char *test[6];
