@@ -46,7 +46,7 @@ int main() {
 		token = strtok(token, "\n");
 	} 
 
-	command1[i] = NULL;
+	command1[i] ="\0";
 	token = strtok(filename, "\n");
 	command1[i--] = token;
 
@@ -54,7 +54,16 @@ int main() {
 	printf("%s\n", command1[0]);
 	printf("%s\n", command1[1]);
 	printf("%s\n", command1[2]);
-	//printf("%s\n", command1[i]);
+	printf("%s\n", command1[3]);
+
+
+	char *test[6];
+	test[0] = "grep";
+	test[1] = "-c"; 
+	test[2] = "omae";
+	test[3] = "test.txt";
+	test[4] = NULL;
+	
 
 	execvp(command1[0], command1); 
 
