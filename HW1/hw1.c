@@ -46,12 +46,17 @@ int main() {
 		token = strtok(token, "\n");
 	} 
 
-	command1[i--] = filename;
+	command1[i] = NULL;
+	token = strtok(filename, "\n");
+	command1[i--] = token;
+
 
 	printf("%s\n", command1[0]);
 	printf("%s\n", command1[1]);
 	printf("%s\n", command1[2]);
 	//printf("%s\n", command1[i]);
+
+	execvp(command1[0], command1); 
 
 	//printf("-----LAUNCH CMD 1: %s ----------------------------------------\n", cmdTest[0]);
 	//execvp(command you want to execute, array w/ whole command + filename at end if applicable);
