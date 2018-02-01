@@ -41,20 +41,21 @@ int main() {
 	//iterate over char array
 
 	int i = 0; 
-	token = strtok(cmd1, " \n");
+	token = strtok(cmd1, " ");
 	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		command1[i] = token;
 		i++; 
-		token = strtok(NULL, " \n");
+		token = strtok(NULL, " ");
 		printf("Token grabbed: %s\n", token);
 	} 
+	i--;
        	command1[i] = filename;
 
 	printf("%s\n", command1[0]);
-	//printf("%s\n", command1[1]);
-        //printf("%s\n", command1[2]); these can cause seg faults if there's nothing in these spots :))
-	printf("File name?: %s\n", command1[i]);
+	printf("%s\n", command1[1]);
+        printf("%s\n", command1[2]);
+	printf("File name?: %s\n", command1[3]);
 
 
 	char *test[6];
