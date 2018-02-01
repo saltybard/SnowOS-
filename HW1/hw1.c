@@ -41,21 +41,20 @@ int main() {
 	//iterate over char array
 
 	int i = 0; 
-	token = strtok(cmd1, " ");
+	token = strtok(cmd1, " \n");
 	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		command1[i] = token;
 		i++; 
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \n");
 		printf("Token grabbed: %s\n", token);
 	} 
-	i--;
        	command1[i] = filename;
 
 	printf("%s\n", command1[0]);
-	printf("%s\n", command1[1]);
-        printf("%s\n", command1[2]);
-	printf("File name?: %s\n", command1[3]);
+	//printf("%s\n", command1[1]);
+        //printf("%s\n", command1[2]); these can cause seg faults if there's nothing in these spots :))
+	printf("File name?: %s\n", command1[i]);
 
 
 	char *test[6];
@@ -86,7 +85,7 @@ char * parseCommand (char cmd[], char *filename) {
 	token = strtok(cmd, " \n");
 	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
-		newCmd[i] = token;
+		cmd1[i] = token;
 		//printf("New CMD: %s", newCmd[i]);
 		i++; 
 		token = strtok(NULL, " \n");
