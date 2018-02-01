@@ -3,6 +3,9 @@
 #include <unistd.h>
 #include <string.h>
 
+char *parseCommand(char cmd[], char *filename);
+
+
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
 	char *token, *newline;
@@ -62,11 +65,33 @@ int main() {
 	test[4] = NULL;
 	
 
-	execvp(command1[0], command1); 
+	//execvp(command1[0], command1); 
 
 	//printf("-----LAUNCH CMD 1: %s ----------------------------------------\n", cmdTest[0]);
 	//execvp(command you want to execute, array w/ whole command + filename at end if applicable);
 
+	char *parsedCmd1 = parseCommand(cmd1, filename);
+	//printf("Parsed CMD 1: %s", parsedCmd1[0]);
 
+}
 
+char * parseCommand (char cmd[], char *filename) { 
+	char *newCmd = (char *)malloc(sizeof(char)*7);
+	char *token;
+	char cmd1[7];
+	printf("Parser here: %c\n", cmd[6]);
+
+	int i = 0; 
+	token = strtok(cmd, " \n");
+	printf("First token grabbed: %s\n", token);
+	while(token != NULL) { 
+		newCmd[i] = token;
+		//printf("New CMD: %s", newCmd[i]);
+		i++; 
+		token = strtok(NULL, " \n");
+		printf("Token grabbed: %s\n", token);
+	} 
+       	//newCmd[i] = filename;
+
+	return newCmd;
 }
