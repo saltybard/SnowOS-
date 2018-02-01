@@ -3,13 +3,13 @@
 #include <unistd.h>
 #include <string.h>
 
-char *parseCommand(char cmd[], char *filename);
+char *parseCommand(char *cmd, char *filename);
 
 
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
 	char *token, *newline;
-	char* command1[7], command2[7], command3[7];
+	char* command1[7], *command2[7], *command3[7];
 	//don't need to worry about buffer overflow :> 
 
 	//read in 3 strings from the console
@@ -75,18 +75,23 @@ int main() {
 
 }
 
-char * parseCommand (char cmd[], char *filename) { 
-	char *newCmd = (char *)malloc(sizeof(char)*7);
+char * parseCommand (char *cmd, char *filename) { 
+	char *newCmd = (char *)malloc(sizeof(char *) *7);
 	char *token;
-	char cmd1[7];
-	printf("Parser here: %c\n", cmd[6]);
+	char *cmd1[7];
+	char parseThis[255];
+	printf("Command has: %c\n", cmd[5]);
+
+	for (int j = 0; j < sizeof(cmd); j++) { 
+		parseThis[j] = cmd[j];
+	}
+	printf("parseThis has: %c\n", parseThis[5]);
 
 	int i = 0; 
-	token = strtok(cmd, " \n");
+	token = strtok(parseThis, " \n");
 	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		cmd1[i] = token;
-		//printf("New CMD: %s", newCmd[i]);
 		i++; 
 		token = strtok(NULL, " \n");
 		printf("Token grabbed: %s\n", token);
