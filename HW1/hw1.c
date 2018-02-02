@@ -3,44 +3,47 @@
 #include <unistd.h>
 #include <string.h>
 
-char **parseCommand();
+char **parseCommand(char *cmd, char *filename);
 
 
 
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
-	char *token, *newline;
-	//char* command1[7], *command2[7], *command3[7];
+	char *token;
 	//don't need to worry about buffer overflow :> 
 
 	//read in 3 strings from the console
 	 
 	printf("mash-1>");
-	char ** command1 = parseCommand();
+	fgets(cmd1, sizeof(cmd1), stdin);
+	
 	
 	printf("mash-2>");
-	char ** command2 = parseCommand();
+	fgets(cmd2, sizeof(cmd2), stdin);
 	
 	
 	printf("mash-3>");
-	char ** command3 = parseCommand();
+	fgets(cmd3, sizeof(cmd3), stdin);
 	
 	printf("filename>");
 	fscanf(stdin, "%s", filename);
 	
 
-	//each array needs to be pointing to an array of strings, which end w/ the file name then w/ null
+	//NOTE: ONCE YOU SEND TO PARSE, CANNOT DISPLAY NAME EASILY W/ CMD1-3 ARRAYS, AS THEY HAVE
+	//BEEN CHANGED BY STRTOK, Gotta go through the below arrays :)
+
+	char ** command1 = parseCommand(cmd1, filename);
+	char ** command2 = parseCommand(cmd2, filename);
+	char ** command3 = parseCommand(cmd3, filename); 
+
 
 	printf("cmd 1: %s\n", command1[0]);
-	printf("cmd 2: %s\n", cmd2);
-	printf("cmd 3: %s\n", cmd3);
-	printf("filename: %s\n", filename);
-	
-	//printf("File name?: %s\n", command1[i]);
-	
+	printf("cmd 2: %s\n", command2[0]);
+	printf("cmd 3: %s\n", command3[0]);
+	printf("filename: %s\n", filename);	
 	
 
-	//execvp(command1[0], command1); 
+	execvp(command1[0], command1); 
 
 	//printf("-----LAUNCH CMD 1: %s ----------------------------------------\n", cmdTest[0]);
 	//execvp(command you want to execute, array w/ whole command + filename at end if applicable);
@@ -48,7 +51,7 @@ int main() {
 
 }
 
-char ** parseCommand () { 
+char ** parseCommand (char *cmd, char *filename) { 
 	char **newCmd = (char **)malloc((sizeof(char *) * 7));
 	for (int i = 0; i < sizeof(newCmd); i++){
 		newCmd[0] = (char *)malloc ((255) * sizeof(char));
@@ -58,10 +61,10 @@ char ** parseCommand () {
 	char parseThis[255];
 
 
-	fgets(parseThis, sizeof(parseThis), stdin);
+	//fgets(parseThis, sizeof(parseThis), stdin);
 
 	int i = 0; 
-	token = strtok(parseThis, " \n");
+	token = strtok(cmd, " \n");
 	printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		newCmd[i] = token;
@@ -70,7 +73,7 @@ char ** parseCommand () {
 		token = strtok(NULL, " \n");
 		printf("Token grabbed: %s\n", token);
 	} 
-       	//newCmd[i] = filename;
+        newCmd[i] = filename;
 	
 	return newCmd;
 }
