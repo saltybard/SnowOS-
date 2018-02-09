@@ -13,9 +13,6 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3);
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
 	char *token;
-	//don't need to worry about buffer overflow :> 
-
-	//read in 3 strings from the console
 	 
 	printf("mash-1>");
 	fgets(cmd1, sizeof(cmd1), stdin);
@@ -30,26 +27,12 @@ int main() {
 	
 	printf("filename>");
 	fscanf(stdin, "%s", filename);
-	
-
-	//NOTE: ONCE YOU SEND TO PARSE, CANNOT DISPLAY NAME EASILY W/ CMD1-3 ARRAYS, AS THEY HAVE
-	//BEEN CHANGED BY STRTOK, Gotta go through the below arrays :)
 
 	char ** command1 = parseCommand(cmd1, filename);
 	char ** command2 = parseCommand(cmd2, filename);
 	char ** command3 = parseCommand(cmd3, filename); 
 
 	forkIt(command1, command2, command3);
-	/* printf("cmd 1: %s\n", command1[0]); */
-	/* printf("cmd 2: %s\n", command2[0]); */
-	/* printf("cmd 3: %s\n", command3[0]); */
-	/* printf("filename: %s\n", filename); */	
-	
-
-	 
-
-	//printf("-----LAUNCH CMD 1: %s ----------------------------------------\n", cmdTest[0]);
-	//execvp(command you want to execute, array w/ whole command + filename at end if applicable);
 	
 
 }
