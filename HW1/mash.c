@@ -1,3 +1,7 @@
+//Stephanie Day and Cassie Renz
+//Assignment 1 - MASH Shell 
+//Due Feb 9th 2018
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,7 +15,11 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3);
 void printCmd(char** cmds, int cmdNum, char* filename);
 
 
-
+/*
+*  Program to take in three user commands that can be executed on the linux command line and a filename
+*  Program then forks and runs three exec commands in parallel, quitting gracefully once all have returned to parent
+*  Prints the order of launch as well as the time in milliseconds to completion for each command.
+*/
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
 	 
@@ -42,6 +50,7 @@ int main() {
 
 }
 
+//Function to split the user inputted sentence into a usable format for execvp
 char ** parseCommand (char *cmd, char *filename) { 
 	char **newCmd = (char **)malloc((sizeof(char *) * 7));
 	for (int i = 0; i < sizeof(newCmd); i++){
@@ -61,6 +70,7 @@ char ** parseCommand (char *cmd, char *filename) {
 	return newCmd;
 }
 
+//Function to print the initial launch commands with proper dilineations
 void printCmd(char** cmds, int cmdNum, char* filename) {
   	int x = 0;
 	int buffer = 61;
@@ -80,9 +90,10 @@ void printCmd(char** cmds, int cmdNum, char* filename) {
 	}
 	printf("\n");
 
-
 }
 
+//Function to fork and run exec in parallel
+//Prints to screen the exec output along with time in milliseconds
 void forkIt(char** cmd1, char** cmd2, char** cmd3) {
   int childIds[3];
   int p1 = fork();
@@ -135,7 +146,7 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
       printf("--------------------------------------------------------------------------------\n");
     }
   }
-  if (((childIds[0] != 0) & (childIds[1] != 0)) & ((childIds[2] > (childIds[0] - 100)) & (childIds[2] < (childIds[0] + 100)))) {
+  if (((childIds[0] != 0) & (childIds[1] != 0)) & ((childIds[2] > (childIds[0] - 100)) & (childIds[2] < (childIds[0] + 100)))) {  //some voodoo to make sure it only prints when all three children have completed runing
     printf("Done waiting on children: %d, %d, %d\n", childIds[0], childIds[1], childIds[2]);
     printf("exiting..\n");
   }
