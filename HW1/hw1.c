@@ -8,6 +8,7 @@
 
 char **parseCommand(char *cmd, char *filename);
 void forkIt(char** cmd1, char** cmd2, char** cmd3);
+void printCmd(char** cmds, int cmdNum, char* filename);
 
 
 
@@ -33,27 +34,9 @@ int main() {
 	char ** command2 = parseCommand(cmd2, filename);
 	char ** command3 = parseCommand(cmd3, filename); 
 
-	int x = 0;
-	printf("-----LAUNCH CMD 1: ");
-	while ( command1[x] != filename) { 
-		printf(" %s", command1[x]);
-		x += 1; 
-	}
-	printf("---------------------------------------------------------------------------\n");
-	x = 0; 
-	printf("-----LAUNCH CMD 2: ");
-	while ( command2[x] != filename) { 
-		printf(" %s", command2[x]);
-		x += 1; 
-	}
-	printf("---------------------------------------------------------------------------\n");
-	x = 0;
-	printf("-----LAUNCH CMD 3: ");
-	while ( command3[x] != filename) { 
-		printf(" %s", command3[x]);
-		x += 1; 
-	}
-	printf("---------------------------------------------------------------------------\n");
+	printCmd(command1, 1, filename);
+	printCmd(command2, 2, filename);
+	printCmd(command3, 3, filename);
 
 	forkIt(command1, command2, command3);
 	
@@ -85,6 +68,28 @@ char ** parseCommand (char *cmd, char *filename) {
         newCmd[i] = filename;
 	
 	return newCmd;
+}
+
+void printCmd(char** cmds, int cmdNum, char* filename) {
+  	int x = 0;
+	int buffer = 61;
+	printf("-----LAUNCH CMD %d: ", cmdNum);
+	while ( cmds[x] != filename) { 
+	  char* cmd = cmds[x];
+	  for(int i = 0; i < strlen(cmd); i++) {
+	    printf("%c", cmd[i]);
+	    buffer--;
+	  }
+	  printf(" ");
+	  buffer--;
+	  x += 1; 
+	}
+	for(int i = 0; i < buffer; i++) {
+	  printf("-");
+	}
+	printf("\n");
+
+
 }
 
 void forkIt(char** cmd1, char** cmd2, char** cmd3) {
