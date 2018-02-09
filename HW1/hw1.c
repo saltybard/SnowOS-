@@ -32,6 +32,28 @@ int main() {
 	char ** command2 = parseCommand(cmd2, filename);
 	char ** command3 = parseCommand(cmd3, filename); 
 
+	int x = 0;
+	printf("-----LAUNCH CMD 1: ");
+	while ( command1[x] != filename) { 
+		printf(" %s", command1[x]);
+		x += 1; 
+	}
+	printf("---------------------------------------------------------------------------\n");
+	x = 0; 
+	printf("-----LAUNCH CMD 2: ");
+	while ( command2[x] != filename) { 
+		printf(" %s", command2[x]);
+		x += 1; 
+	}
+	printf("---------------------------------------------------------------------------\n");
+	x = 0;
+	printf("-----LAUNCH CMD 3: ");
+	while ( command3[x] != filename) { 
+		printf(" %s", command3[x]);
+		x += 1; 
+	}
+	printf("---------------------------------------------------------------------------\n");
+
 	forkIt(command1, command2, command3);
 	
 
