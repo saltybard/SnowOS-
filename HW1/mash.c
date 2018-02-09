@@ -14,7 +14,6 @@ void printCmd(char** cmds, int cmdNum, char* filename);
 
 int main() {
 	char cmd1[255], cmd2[255], cmd3[255], filename[255];
-	char *token;
 	 
 	printf("mash-1>");
 	fgets(cmd1, sizeof(cmd1), stdin);
@@ -49,21 +48,13 @@ char ** parseCommand (char *cmd, char *filename) {
 		newCmd[0] = (char *)malloc ((255) * sizeof(char));
 	}
 	char *token;
-	char *cmd1[7];
-	char parseThis[255];
-
-
-	//fgets(parseThis, sizeof(parseThis), stdin);
 
 	int i = 0; 
 	token = strtok(cmd, " \n");
-	//printf("First token grabbed: %s\n", token);
 	while(token != NULL) { 
 		newCmd[i] = token;
-		//printf("Does my array work: %s\n", newCmd[i]);
 		i++; 
 		token = strtok(NULL, " \n");
-		//printf("Token grabbed: %s\n", token);
 	} 
         newCmd[i] = filename;
 	
@@ -121,7 +112,7 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
       if (p3 > 0) {
 	childIds[2] = p3;
 	wait(NULL);	
-	if (childIds[0] != 0) { 
+	if (childIds[0] != 0) { //make sure to only print when the child has finished
           gettimeofday(&timecheck, NULL);
           end1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
           printf("Result took: %ldms\n", (end1 - start1));
@@ -129,7 +120,7 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
         }
       }
       wait(NULL);
-      if (childIds[1] != 0) { 
+      if (childIds[1] != 0) { //make sure to only print when the child has finished
           gettimeofday(&timecheck, NULL);
           end2 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
           printf("Result took: %ldms\n", (end2 - start2));
@@ -137,14 +128,14 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
         }
     }
     wait(NULL);
-    if (childIds[2] > (childIds[0] - 100) & childIds[2] <     (childIds[0] + 100)) { 
+    if ((childIds[2] > (childIds[0] - 100)) & (childIds[2] < (childIds[0] + 100))) { //make sure to only print when the child has finished
       gettimeofday(&timecheck, NULL);
       end3 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
       printf("Result took: %ldms\n", (end3 - start3));
       printf("--------------------------------------------------------------------------------\n");
     }
   }
-  if (childIds[0] != 0 & childIds[1] != 0 & childIds[2] > (childIds[0] - 100) & childIds[2] <     (childIds[0] + 100)) {
+  if (((childIds[0] != 0) & (childIds[1] != 0)) & ((childIds[2] > (childIds[0] - 100)) & (childIds[2] < (childIds[0] + 100)))) {
     printf("Done waiting on children: %d, %d, %d\n", childIds[0], childIds[1], childIds[2]);
     printf("exiting..\n");
   }
