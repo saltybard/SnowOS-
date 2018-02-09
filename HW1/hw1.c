@@ -117,7 +117,7 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
 	childIds[2] = p3;
 	wait(NULL);
         gettimeofday(&timecheck, NULL);
-        end3 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+        end1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
       }
       wait(NULL);
       gettimeofday(&timecheck, NULL);
@@ -125,7 +125,7 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
     }
     wait(NULL);
     gettimeofday(&timecheck, NULL);
-    end1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
+    end3 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
   }
   if (childIds[0] != 0 & childIds[1] != 0 & childIds[2] > (childIds[0] - 100) & childIds[2] <     (childIds[0] + 100)) {
     printf("Result took: %ldms\n", (end1 - start1));
