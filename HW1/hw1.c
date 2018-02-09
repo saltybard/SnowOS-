@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 
 char **parseCommand(char *cmd, char *filename);
 void forkIt(char** cmd1, char** cmd2, char** cmd3);
@@ -89,16 +90,24 @@ char ** parseCommand (char *cmd, char *filename) {
 void forkIt(char** cmd1, char** cmd2, char** cmd3) {
   int childIds[3];
   int p1 = fork();
+  struct timeval timecheck; 
+  long start1, start2, start3, end1, end2, end3;
+  gettimeofday(&timecheck, NULL);
+  start1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
   if (p1 == 0) { // first child
     execvp(cmd1[0], cmd1);//first child's command HERE
   }
   if (p1 > 0) { // back in the parent
+    gettimeofday(&timecheck, NULL);
+    start2 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
     childIds[0] = p1;
     int p2 = fork();
     if (p2 == 0) {//second child
       execvp(cmd2[0], cmd2);//second child's command HERE
     }
     if (p2 > 0) { // back in p1
+      gettimeofday(&timecheck, NULL);
+      start3 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
       childIds[1] = p2;
       int p3 = fork();
       if (p3 == 0) {
@@ -107,11 +116,23 @@ void forkIt(char** cmd1, char** cmd2, char** cmd3) {
       if (p3 > 0) {
 	childIds[2] = p3;
 	wait(NULL);
+        gettimeofday(&timecheck, NULL);
+        end3 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
       }
       wait(NULL);
+      gettimeofday(&timecheck, NULL);
+      end2 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
     }
     wait(NULL);
+    gettimeofday(&timecheck, NULL);
+    end1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
   }
-  printf("Children: %d, %d, %d\n", childIds[0], childIds[1], childIds[2]);
-  printf("exiting..\n");
+  if (childIds[0] != 0 & childIds[1] != 0 & childIds[2] > (childIds[0] - 100) & childIds[2] <     (childIds[0] + 100)) {
+    printf("Result took: %ldms\n", (end1 - start1));
+    printf("Result took: %ldms\n", (end2 - start2));
+    printf("Result took: %ldms\n", (end3 - start3));
+    printf("--------------------------------------------------------------------------------\n");
+    printf("Done waiting on children: %d, %d, %d\n", childIds[0], childIds[1], childIds[2]);
+    printf("exiting..\n");
+  }
 }
