@@ -11,7 +11,7 @@
 #include <sys/time.h>
 
 char **parseCommand(char *cmd, char *filename);
-int * forkIt(char** cmd1, char** cmd2, char** cmd3);
+void forkIt(char** cmd1, char** cmd2, char** cmd3);
 void printCmd(char** cmds, int cmdNum, char* filename);
 
 
@@ -21,7 +21,7 @@ void printCmd(char** cmds, int cmdNum, char* filename);
 *  Prints the order of launch as well as the time in milliseconds to completion for each command.
 */
 int main() {
-	char cmd1[255], cmd2[255], cmd3[255], filename[255]; 
+	char cmd1[255], cmd2[255], cmd3[255], filename[255];
 	 
 	printf("mash-1>");
 	fgets(cmd1, sizeof(cmd1), stdin);
@@ -45,23 +45,7 @@ int main() {
 	printCmd(command2, 2, filename);
 	printCmd(command3, 3, filename);
 
-	int *forkRet = forkIt(command1, command2, command3);
-
-        if (((forkRet[0] >= 60) & (forkRet[1] >= 60)) & ((forkRet[2] > (forkRet[2] - 100)) & (forkRet[2] < (forkRet[2] + 100)))) {  //some voodoo to make sure it only prints when all three children have completed runing
-            printf("Done waiting on children: %d, %d, %d\n", forkRet[0], forkRet[1], forkRet[2]);
-            printf("exiting..\n");
-        }
-
-  if (forkRet[3] == -1) { 
-      printf("CMD1:[SHELL 1] STATUS CODE =-1\n");
-    }
-  
-    if (forkRet[4] == -1) { 
-      printf("CMD2:[SHELL 2] STATUS CODE =-1\n");
-    }
-    if (forkRet[5] == -1) { 
-      printf("CMD3:[SHELL 3] STATUS CODE =-1\n");
-    }
+	forkIt(command1, command2, command3);
 	
 
 }
@@ -110,15 +94,18 @@ void printCmd(char** cmds, int cmdNum, char* filename) {
 
 //Function to fork and run exec in parallel
 //Prints to screen the exec output along with time in milliseconds
-int * forkIt(char** cmd1, char** cmd2, char** cmd3) {
-  int * childIds = (int *)malloc((sizeof(int *) * 6));
+void forkIt(char** cmd1, char** cmd2, char** cmd3) {
+  int childIds[3];
   int p1 = fork();
+  int cmd1ret = 0;
+  int cmd2ret = 0;
+  int cmd3ret = 0;
   struct timeval timecheck; 
   long start1, start2, start3, end1, end2, end3;
   gettimeofday(&timecheck, NULL);
   start1 = (long)timecheck.tv_sec * 1000 + (long)timecheck.tv_usec / 1000;
   if (p1 == 0) { // first child
-    childIds[3] = execvp(cmd1[0], cmd1);//first child's command HERE
+    cmd1ret = execvp(cmd1[0], cmd1);//first child's command HERE
   }
   if (p1 > 0) { // back in the parent
     gettimeofday(&timecheck, NULL);
@@ -126,7 +113,7 @@ int * forkIt(char** cmd1, char** cmd2, char** cmd3) {
     childIds[0] = p1;
     int p2 = fork();
     if (p2 == 0) {//second child
-      childIds[4] = execvp(cmd2[0], cmd2);//second child's command HERE
+      cmd2ret = execvp(cmd2[0], cmd2);//second child's command HERE
     }
     if (p2 > 0) { // back in p1
       gettimeofday(&timecheck, NULL);
@@ -134,10 +121,10 @@ int * forkIt(char** cmd1, char** cmd2, char** cmd3) {
       childIds[1] = p2;
       int p3 = fork();
       if (p3 == 0) {
-	childIds [4] = execvp(cmd3[0], cmd3);//third child's command HERE
+	cmd3ret = execvp(cmd3[0], cmd3);//third child's command HERE
       }
       if (p3 > 0) {
-	childIds[5] = p3;
+	childIds[2] = p3;
 	wait(NULL);	
 	if (childIds[0] >= 60) { //make sure to only print when the child has finished
           gettimeofday(&timecheck, NULL);
@@ -164,6 +151,20 @@ int * forkIt(char** cmd1, char** cmd2, char** cmd3) {
     
   }
 
-  return childIds; 
+
+  if (((childIds[0] >= 60) & (childIds[1] >= 60)) & ((childIds[2] > (childIds[0] - 100)) & (childIds[2] < (childIds[0] + 100)))) {  //some voodoo to make sure it only prints when all three children have completed runing
+    printf("Done waiting on children: %d, %d, %d\n", childIds[0], childIds[1], childIds[2]);
+    printf("exiting..\n");
+  }
+
+  if (cmd1ret == -1) { 
+      printf("CMD1:[SHELL 1] STATUS CODE =-1\n");
+    }
   
+    if (cmd2ret == -1) { 
+      printf("CMD2:[SHELL 2] STATUS CODE =-1\n");
+    }
+    if (cmd3ret == -1) { 
+      printf("CMD3:[SHELL 3] STATUS CODE =-1\n");
+    }
 }
