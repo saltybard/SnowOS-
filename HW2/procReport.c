@@ -28,15 +28,13 @@ char** childName;
 char* const CHILD_STRING = "*No Children";
 int stats[3];
 
-#define n_array (sizeof (array) / sizeof (const char *))
-
+//Generating the proc file's information for the user 
 static int procReport_show(struct seq_file *m, void *v) {
   int i;  
   seq_printf(m, "PROCESS REPORTER:\n");
   seq_printf(m, "Unrunnable: %d\nRunnable: %d\nStopped: %d\n", stats[0], stats[1], stats[2]);
 
 	for (i = 0; i < pCount; i++) { 
-		//seq_printf(m, "%d: %s\n", i, array[i]);
 		if (numChild[i] == 0) { 
 			seq_printf(m, "Process ID=%d Name=%s *No Children\n", PID[i], procName[i]);
 		} else { 
@@ -47,10 +45,12 @@ static int procReport_show(struct seq_file *m, void *v) {
   return 0;
 }
 
+//structure for opening a proc report file 
 static int procReport_open(struct inode *inode, struct  file *file) {
   return single_open(file, procReport_show, NULL);
 }
 
+//Defining the file operations for the procReport proc file 
 static const struct file_operations procReport_fops = {
   .owner = THIS_MODULE,
   .open = procReport_open,
@@ -59,46 +59,46 @@ static const struct file_operations procReport_fops = {
   .release = single_release,
 };
 
+//Initialization procedure
 int proc_init (void) {
   printk(KERN_INFO "helloModule: kernel module initialized\n");
 
-  
+  //Malloc arrays so that proc open can access the information later
   getProcNum(pCountPtr, task);
   printk("%d", pCount);
   PID = kmalloc(sizeof(*PID) * pCount, GFP_KERNEL);
-	//printk("%d", sizeof(*PID) * pCount);
+
   cPID = kmalloc(sizeof(*cPID) * pCount, GFP_KERNEL);
   numChild = kmalloc(sizeof(*numChild) * pCount, GFP_KERNEL);
   procName = vmalloc(sizeof(char*) * pCount);
   childName = vmalloc(sizeof(char*) * pCount);
   genProcReport();
-  //printk("TestChildName: %s", childName[2]);
+
   stats[0] = unrunnable;
   stats[1] = runnable;
   stats[2] = stopped;
-
-  //printk("test: %s", procName[0]);
 
   
   printk("PROCESS REPORTER:\n");
   printk("Unrunnable: %d\nRunnable: %d\nStopped: %d\n", unrunnable, runnable, stopped);
 
+	//Create the proc report file
   proc_create("proc_report", 0, NULL, &procReport_fops);
   return 0;
 }
 
+//Grabbing the number of processes
 void getProcNum(int* pC, struct task_struct* task) {
   for_each_process(task) {
     (*pC)++;
   }
 }
 
-
+//Getting all of the process information - parent ID/name, child ID/name/number of
 void genProcReport() {
   int i = 0;
   for_each_process(task) { 
     childCount = 0; 
-    //printk("%s[%d]\n", task->comm, task->pid);
     PID[i] = task->pid;
     procName[i] = (char*)vmalloc(strlen(task->comm) + 1);
     procName[i] = task->comm;
@@ -116,7 +116,6 @@ void genProcReport() {
       } 
       childCount++; 
     }
-    //if (childCount > 0) printk("Child: %s (%d)", childName, childCount);
     if (childCount == 0) {
       childName[i] = (char*)vmalloc(strlen(CHILD_STRING) + 1);
       childName[i] = CHILD_STRING;
@@ -127,19 +126,12 @@ void genProcReport() {
    } 
 }
 
+//Cleanup the module and remove the proc entry
 void proc_cleanup(void) {
   printk(KERN_INFO "helloModule: performing cleanup of module\n");
   remove_proc_entry("proc_report", NULL);
 }
 
-/*static int __init procReport_init(void) {
-  proc_create("procReport", 0, NULL, &procReport_fops);
-  return 0;
-}*/
-
-/*static void __exit procReport_exit(void) {
-  remove_proc_entry("proc_Report", NULL);
-}*/
 
 
 MODULE_LICENSE("GPL");
