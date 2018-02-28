@@ -83,7 +83,7 @@ int proc_init (void) {
   printk("PROCESS REPORTER:\n");
   printk("Unrunnable: %d\nRunnable: %d\nStopped: %d\n", unrunnable, runnable, stopped);
 
-  proc_create("proc_Report", 0, NULL, &procReport_fops);
+  proc_create("proc_report", 0, NULL, &procReport_fops);
   return 0;
 }
 
@@ -129,7 +129,7 @@ void genProcReport() {
 
 void proc_cleanup(void) {
   printk(KERN_INFO "helloModule: performing cleanup of module\n");
-  remove_proc_entry("proc_Report", NULL);
+  remove_proc_entry("proc_report", NULL);
 }
 
 /*static int __init procReport_init(void) {
