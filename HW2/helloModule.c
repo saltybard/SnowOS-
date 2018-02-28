@@ -5,6 +5,8 @@
 #include<linux/slab.h>
 #include<linux/string.h>
 #include<linux/vmalloc.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
 
 void getProcNum(int* pC, struct task_struct* task);
 void genProcReport(void);
@@ -26,6 +28,37 @@ char** childName;
 char* const CHILD_STRING = "*No Children";
 int stats[3];
 
+#define n_array (sizeof (array) / sizeof (const char *))
+
+static int procReport_show(struct seq_file *m, void *v) {
+  int i;  
+  seq_printf(m, "PROCESS REPORTER:\n");
+  seq_printf(m, "Unrunnable: %d\nRunnable: %d\nStopped: %d\n", stats[0], stats[1], stats[2]);
+
+	for (i = 0; i < pCount; i++) { 
+		//seq_printf(m, "%d: %s\n", i, array[i]);
+		if (numChild[i] == 0) { 
+			seq_printf(m, "Process ID=%d Name=%s *No Children\n", PID[i], procName[i]);
+		} else { 
+			seq_printf(m, "Process ID=%d Name=%s number_of_children=%d first_child_pid=%d first_child_name=%s\n", PID[i], procName[i], numChild[i], cPID[i], childName[i]);
+		}
+	}
+
+  return 0;
+}
+
+static int procReport_open(struct inode *inode, struct  file *file) {
+  return single_open(file, procReport_show, NULL);
+}
+
+static const struct file_operations procReport_fops = {
+  .owner = THIS_MODULE,
+  .open = procReport_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
+};
+
 int proc_init (void) {
   printk(KERN_INFO "helloModule: kernel module initialized\n");
 
@@ -33,6 +66,7 @@ int proc_init (void) {
   getProcNum(pCountPtr, task);
   printk("%d", pCount);
   PID = kmalloc(sizeof(*PID) * pCount, GFP_KERNEL);
+	//printk("%d", sizeof(*PID) * pCount);
   cPID = kmalloc(sizeof(*cPID) * pCount, GFP_KERNEL);
   numChild = kmalloc(sizeof(*numChild) * pCount, GFP_KERNEL);
   procName = vmalloc(sizeof(char*) * pCount);
@@ -48,6 +82,8 @@ int proc_init (void) {
   
   printk("PROCESS REPORTER:\n");
   printk("Unrunnable: %d\nRunnable: %d\nStopped: %d\n", unrunnable, runnable, stopped);
+
+  proc_create("proc_Report", 0, NULL, &procReport_fops);
   return 0;
 }
 
@@ -93,7 +129,18 @@ void genProcReport() {
 
 void proc_cleanup(void) {
   printk(KERN_INFO "helloModule: performing cleanup of module\n");
+  remove_proc_entry("proc_Report", NULL);
 }
+
+/*static int __init procReport_init(void) {
+  proc_create("procReport", 0, NULL, &procReport_fops);
+  return 0;
+}*/
+
+/*static void __exit procReport_exit(void) {
+  remove_proc_entry("proc_Report", NULL);
+}*/
+
 
 MODULE_LICENSE("GPL");
 module_init(proc_init);
