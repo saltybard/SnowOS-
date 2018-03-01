@@ -30,7 +30,7 @@
 int main (int argc, char * argv[])
 {
   // Uncomment to see example operation of the readtasks() routine
-  readtasks((void *)100);  
+  //readtasks((void *)100);  
 
   // Uncomment to see example operation of the dotasks() routine
   //dotasks((void *) NULL);
