@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -77,6 +78,8 @@ typedef struct __task_t {
 // Implement sleep in ms 
 void sleepms(int milliseconds) 
 {
+  usleep(milliseconds * 1000);
+  return;
 }
 
 // Implement Bounded Buffer put() here

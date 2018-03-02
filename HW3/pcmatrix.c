@@ -29,6 +29,16 @@
 
 int main (int argc, char * argv[])
 {
+  //variable to hold passed in millisecond argument
+  int ms = 0;
+  if (argc == 2) {
+    ms = strtol(argv[1], NULL,10); 
+  } else {
+    ms = 500;
+  }
+
+  printf("millisecond arg: %d\n", ms);
+  
   // Uncomment to see example operation of the readtasks() routine
   //readtasks((void *)100);  
 
