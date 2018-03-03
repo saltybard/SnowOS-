@@ -311,9 +311,18 @@ void *dotasks(void * arg)
       }
       case 'a':
       {
-        // TO DO
-        //
         // Implement Average Command
+				char cwd[1024];
+				if (!(getcwd(cwd, sizeof(cwd)) != NULL))
+          fprintf(stderr, "getcwd error\n");
+				matrix = AllocMatrix(newtask->row, newtask->col);
+        GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
+				char tmpfilename[FULLFILENAME];
+        sprintf(tmpfilename,"%s/%s/%s.avg",cwd,out_dir,newtask->name);
+        matrix_file = fopen(tmpfilename, "w");
+        fprintf(matrix_file,"avg element=%d\n",AvgElement(matrix,newtask->row,newtask->col)); 
+        fclose(matrix_file);
+        FreeMatrix(matrix,newtask->row,newtask->col);
         break;
       }
       case 'r':
