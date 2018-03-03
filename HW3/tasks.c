@@ -78,6 +78,7 @@ typedef struct __task_t {
 // Implement sleep in ms 
 void sleepms(int milliseconds) 
 {
+	printf("%d\n", milliseconds);
   usleep(milliseconds * 1000);
   return;
 }
@@ -170,7 +171,7 @@ void *readtasks(void *arg)
               // remove newline from buffer string
               strtok(buffer, "\n");
 #if OUTPUT
-              printf("read form command file='%s'\n",buffer);
+              printf("read from command file='%s'\n",buffer);
 #endif
 
               //
@@ -182,11 +183,12 @@ void *readtasks(void *arg)
               // First make a copy of the string in the buffer
 
               // Add this copy to the bounded buffer for processing by consumer threads...
-              // Use of locks and condition variables and call to put() routine...
-          }
+              // Use of locks and condition variables and call to put() routine...         
+					}
 
           /* When you finish with the file, close it */
           fclose(entry_file);
+					sleepms(sleep_ms); 
         }
     }
     // This function never returns as we continously process the "in_dir"...
