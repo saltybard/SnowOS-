@@ -85,7 +85,7 @@ typedef struct __task_t {
 // Implement sleep in ms 
 void sleepms(int milliseconds) 
 {
-	printf("%d\n", milliseconds);
+  printf("%d\n", milliseconds);
   usleep(milliseconds * 1000);
   return;
 }
@@ -99,62 +99,62 @@ void sleepms(int milliseconds)
 // bounded buffer...
 void *readtasks(void *arg)
 {
-    // TO DO
-    // The sleep duration in ms should be passed in using pthread_create
-    // lecture slides from class provide example code
-    //
-    int sleep_ms = (int) arg;
-    char in_dir[BUFFSIZ] = "tasks_input";
-    DIR* FD = NULL;
-    struct dirent* in_file = NULL;
-    FILE *entry_file;
-    char buffer[BUFFSIZ];
+  // TO DO
+  // The sleep duration in ms should be passed in using pthread_create
+  // lecture slides from class provide example code
+  //
+  int sleep_ms = (int) arg;
+  char in_dir[BUFFSIZ] = "tasks_input";
+  DIR* FD = NULL;
+  struct dirent* in_file = NULL;
+  FILE *entry_file;
+  char buffer[BUFFSIZ];
 
-    char cwd[1024];
-    if (!(getcwd(cwd, sizeof(cwd)) != NULL))
-      fprintf(stderr, "getcwd error\n");
+  char cwd[1024];
+  if (!(getcwd(cwd, sizeof(cwd)) != NULL))
+    fprintf(stderr, "getcwd error\n");
 
-    printf("Processing tasks in dir='%s'\n",in_dir);
+  printf("Processing tasks in dir='%s'\n",in_dir);
 
-    /* Scanning the in directory */
-    if (NULL == (FD = opendir (in_dir))) 
+  /* Scanning the in directory */
+  if (NULL == (FD = opendir (in_dir))) 
     {
-        fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
-        return 1;
+      fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
+      return 1;
     }
 
-    // continuously process the command files in the "in_dir" directory 
-    while (1)
+  // continuously process the command files in the "in_dir" directory 
+  while (1)
     {
-        if (FD != NULL)
-          in_file = readdir(FD);
+      if (FD != NULL)
+	in_file = readdir(FD);
 
-        // Close and reopen when we run out of files...
-        // This essentially repeats the processing of the "in_dir" forever in an endless loop...
-        if ((in_file == NULL) || (in_file == 0))
+      // Close and reopen when we run out of files...
+      // This essentially repeats the processing of the "in_dir" forever in an endless loop...
+      if ((in_file == NULL) || (in_file == 0))
         {
-           if (FD != NULL)
-           {
-             closedir(FD);
-             //implement sleep command in ms here  
-             sleepms(sleep_ms);
-             FD = NULL;
-           }
-           if (NULL == (FD = opendir (in_dir))) 
-           {
-             fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
-             return 1;
-           }
+	  if (FD != NULL)
+	    {
+	      closedir(FD);
+	      //implement sleep command in ms here  
+	      sleepms(sleep_ms);
+	      FD = NULL;
+	    }
+	  if (NULL == (FD = opendir (in_dir))) 
+	    {
+	      fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
+	      return 1;
+	    }
         }
-        else
+      else
         {
           /* On linux/Unix we don't want current and parent directories
            * On windows machine too, thanks Greg Hewgill
            */
           if (!strcmp (in_file->d_name, "."))    // ignore the present working dir
-              continue;
+	    continue;
           if (!strcmp (in_file->d_name, ".."))   // ignore the previous dir 
-              continue;
+	    continue;
 
           // build an absolute path to the files in the "in_dir" for processing
           char tmpfilename[FULLFILENAME];
@@ -165,11 +165,11 @@ void *readtasks(void *arg)
           // open one file at a time for processing
           entry_file = fopen(tmpfilename, "rw");
           if (entry_file == NULL)
-          {
+	    {
               printf("Unable to open read file %s\n",in_file->d_name);
               fprintf(stderr, "Error : Failed to open entry file - %s\n", strerror(errno));
               return 1;
-          }
+	    }
           printf("read file %s opened\n",in_file->d_name);
 
           /* Read command file - add command to bounded buffer */
@@ -195,7 +195,7 @@ void *readtasks(void *arg)
               // Use of locks and condition variables and call to put() routine...
 	      pthread_mutex_lock(&lock);
 	      while(getCount() == getMax()) {
-					pthread_cond_wait(&empty, &lock);
+		pthread_cond_wait(&empty, &lock);
 	      }
 	      put(cmdStr);
 	      pthread_cond_signal(&full);
@@ -207,11 +207,11 @@ void *readtasks(void *arg)
 	      //sleepms(sleep_ms); 
 
 	    }
+	}
+      // This function never returns as we continously process the "in_dir"...
+      return 0;
     }
-    // This function never returns as we continously process the "in_dir"...
-    return 0;
 }
-
 /*
  *  This is a helper routine which parses an int using strtok.
  *  This helper captures the null and returns as a zero int.
@@ -300,7 +300,7 @@ void *dotasks(void * arg)
     task_t * newtask = processTask(task);
     switch (newtask->cmd)
     { 
-      case 'c':
+    case 'c':
       {
         char cwd[1024];
         if (!(getcwd(cwd, sizeof(cwd)) != NULL))
@@ -315,13 +315,15 @@ void *dotasks(void * arg)
         FreeMatrix(matrix,newtask->row,newtask->col);
         break;
       }
-      case 'd':
-        matrix = AllocMatrix(newtask->row,newtask->col);
-        GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
-        DisplayMatrix(matrix,newtask->row, newtask->col, stdout);
-        FreeMatrix(matrix,newtask->row,newtask->col);
-        break;
-      case 's':
+    case 'd':
+      {
+	matrix = AllocMatrix(newtask->row,newtask->col);
+	GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
+	DisplayMatrix(matrix,newtask->row, newtask->col, stdout);
+	FreeMatrix(matrix,newtask->row,newtask->col);
+	break;
+      }
+    case 's':
       {
         char cwd[1024];
         if (!(getcwd(cwd, sizeof(cwd)) != NULL))
@@ -336,15 +338,15 @@ void *dotasks(void * arg)
         FreeMatrix(matrix,newtask->row,newtask->col);
         break;
       }
-      case 'a':
+    case 'a':
       {
         // Implement Average Command
-				char cwd[1024];
-				if (!(getcwd(cwd, sizeof(cwd)) != NULL))
+	char cwd[1024];
+	if (!(getcwd(cwd, sizeof(cwd)) != NULL))
           fprintf(stderr, "getcwd error\n");
-				matrix = AllocMatrix(newtask->row, newtask->col);
+	matrix = AllocMatrix(newtask->row, newtask->col);
         GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
-				char tmpfilename[FULLFILENAME];
+	char tmpfilename[FULLFILENAME];
         sprintf(tmpfilename,"%s/%s/%s.avg",cwd,out_dir,newtask->name);
         matrix_file = fopen(tmpfilename, "w");
         fprintf(matrix_file,"avg element=%d\n",AvgElement(matrix,newtask->row,newtask->col)); 
