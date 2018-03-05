@@ -30,6 +30,8 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include "matrix.h"
+#include "taskbuffer.h"
+
 
 // Maximum command filename length
 #define MAXFILENAMELEN 256
