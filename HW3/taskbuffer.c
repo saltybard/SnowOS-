@@ -13,18 +13,26 @@
 
 // MAX should defined the size of the bounded buffer 
 #define MAX 200
-
-int buffer[MAX];
+//TODO: Ask if this is okay. if not okay, fix.
+char* buffer[MAX];
 int fill = 0; 
 int use = 0; 
 int count = 0; 
 
-void put (int value) { 
+void put (char* value) { 
 	buffer[fill] = value; 
 	fill = (fill + 1) % MAX; 
 	count++;
 }
 
-void get () {
+char** get() {
+  int tmp = buffer[use];
+  use = (use + 1) % MAX;
+  count--;
+  return tmp;
 
+}
+
+int getCount() {
+  return count; 
 }

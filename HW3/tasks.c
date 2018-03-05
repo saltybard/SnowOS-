@@ -47,8 +47,13 @@
 #define MAX 200
 #define OUTPUT 1
 
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t full = PTHREAD_COND_INITIALIZER;
+pthread_cond_t empty = PTHREAD_COND_INITIALIZER;
+
+
 // Define bounded buffer here - use static size of MAX
-char * tasks[MAX];
+//char * tasks[MAX];
 
 // Define variables for get/put routines
 
@@ -169,7 +174,7 @@ void *readtasks(void *arg)
 
           /* Read command file - add command to bounded buffer */
           while (fgets(buffer, BUFFSIZ, entry_file) != NULL)
-          {
+	    {
               // remove newline from buffer string
               strtok(buffer, "\n");
 #if OUTPUT
@@ -183,16 +188,25 @@ void *readtasks(void *arg)
               printf("Read the command='%s'\n",buffer);
               
               // First make a copy of the string in the buffer
+	      char* cmdStr;
+	      strcpy(cmdStr, buffer);
 
               // Add this copy to the bounded buffer for processing by consumer threads...
-              // Use of locks and condition variables and call to put() routine...         
-					}
+              // Use of locks and condition variables and call to put() routine...
+	      pthread_mutex_lock(&lock);
+	      while(getCount() == MAX) {
+		pthread_cond_wait(&empty, &lock);
+	      }
+	      put(cmdStr);
+	      pthread_cond_signal(&full);
+	      pthread_mutex_unlock(&lock);
+					
 
-          /* When you finish with the file, close it */
-          fclose(entry_file);
-		//sleepms(sleep_ms); 
+	      /* When you finish with the file, close it */
+	      fclose(entry_file);
+	      //sleepms(sleep_ms); 
 
-        }
+	    }
     }
     // This function never returns as we continously process the "in_dir"...
     return 0;

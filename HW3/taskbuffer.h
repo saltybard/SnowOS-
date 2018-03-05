@@ -8,5 +8,6 @@
  *
  */
 
-void put (int value);
-void get ();
+void put (char* value);
+char** get ();
+int getCount();
