@@ -9,5 +9,6 @@
  */
 
 void put (char* value);
-char** get ();
+char* get ();
 int getCount();
+int getMax();

@@ -44,7 +44,7 @@
 #define BUFFSIZ 80
 
 // MAX should defined the size of the bounded buffer 
-#define MAX 200
+//#define MAX 200
 #define OUTPUT 1
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
@@ -194,8 +194,8 @@ void *readtasks(void *arg)
               // Add this copy to the bounded buffer for processing by consumer threads...
               // Use of locks and condition variables and call to put() routine...
 	      pthread_mutex_lock(&lock);
-	      while(getCount() == MAX) {
-		pthread_cond_wait(&empty, &lock);
+	      while(getCount() == getMax()) {
+					pthread_cond_wait(&empty, &lock);
 	      }
 	      put(cmdStr);
 	      pthread_cond_signal(&full);
@@ -267,9 +267,17 @@ void *dotasks(void * arg)
     // TO DO
     //
     // Read command to perform from the bounded buffer HERE
-    char * task = (char *) &static_task;
+    //char * task = (char *) &static_task;
+		
+		pthread_mutex_lock(&lock); 		
+		while (getCount() == 0) {		
+			pthread_cond_wait(&full, &lock);
+		}
+		char* task = get();
+		pthread_cond_signal(&empty);
+		pthread_mutex_unlock(&lock);
     // create matrix command example
-    sprintf(task, "c a1 20 20 100");
+    //sprintf(task, "c a1 20 20 100");
 
     // display matrix command example
     //sprintf(task, "d a2 10 10 100");
@@ -285,7 +293,7 @@ void *dotasks(void * arg)
     // TO DO
     // Remove this sleep command - it is here for demonstration purposes only
     // For now this puts a 1 sec interval between repeating the same command over and over again 
-    sleep(1);
+    //sleep(1);
 
     printf("***************DO TASK: '%s'\n",task);
 

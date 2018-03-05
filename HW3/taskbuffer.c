@@ -25,8 +25,8 @@ void put (char* value) {
 	count++;
 }
 
-char** get() {
-  int tmp = buffer[use];
+char* get() {
+  char* tmp = buffer[use];
   use = (use + 1) % MAX;
   count--;
   return tmp;
@@ -36,3 +36,7 @@ char** get() {
 int getCount() {
   return count; 
 }
+
+int getMax() { 
+	return MAX; 
+} 
