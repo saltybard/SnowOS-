@@ -26,6 +26,7 @@
 #include "matrix.h"
 #include "tasks.h"
 #include "pcmatrix.h"
+#include "taskbuffer.h"
 
 int main (int argc, char * argv[])
 {

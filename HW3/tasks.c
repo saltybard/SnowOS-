@@ -30,6 +30,8 @@
 #include <pthread.h>
 #include <sys/time.h>
 #include "matrix.h"
+#include "taskbuffer.h"
+
 
 // Maximum command filename length
 #define MAXFILENAMELEN 256
@@ -188,7 +190,8 @@ void *readtasks(void *arg)
 
           /* When you finish with the file, close it */
           fclose(entry_file);
-					//sleepms(sleep_ms); 
+		//sleepms(sleep_ms); 
+
         }
     }
     // This function never returns as we continously process the "in_dir"...
