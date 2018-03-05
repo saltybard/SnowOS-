@@ -254,7 +254,7 @@ task_t *processTask(char * task)
 void *dotasks(void * arg)
 {
   char out_dir[BUFFSIZ] = "tasks_output";
-  char static_task[BUFFSIZ] = "";
+  //char static_task[BUFFSIZ] = "";
   FILE *matrix_file;
   int ** matrix;
 
