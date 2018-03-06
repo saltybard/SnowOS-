@@ -102,10 +102,10 @@ void *readtasks(void *arg)
   // The sleep duration in ms should be passed in using pthread_create
   // lecture slides from class provide example code
   //
-  int sleep_ms = (int) arg;
+  int sleep_ms = (int)arg;
   char in_dir[BUFFSIZ] = "tasks_input";
-  DIR* FD = NULL;
-  struct dirent* in_file = NULL;
+  DIR *FD = NULL;
+  struct dirent *in_file = NULL;
   FILE *entry_file;
   char buffer[BUFFSIZ];
 
@@ -113,103 +113,102 @@ void *readtasks(void *arg)
   if (!(getcwd(cwd, sizeof(cwd)) != NULL))
     fprintf(stderr, "getcwd error\n");
 
-  printf("Processing tasks in dir='%s'\n",in_dir);
+  printf("Processing tasks in dir='%s'\n", in_dir);
 
   /* Scanning the in directory */
-  if (NULL == (FD = opendir (in_dir))) 
-    {
-      fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
-      return 1;
-    }
+  if (NULL == (FD = opendir(in_dir)))
+  {
+    fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
+    return 1;
+  }
 
-  // continuously process the command files in the "in_dir" directory 
+  // continuously process the command files in the "in_dir" directory
   while (1)
+  {
+    if (FD != NULL)
+      in_file = readdir(FD);
+
+    // Close and reopen when we run out of files...
+    // This essentially repeats the processing of the "in_dir" forever in an endless loop...
+    if ((in_file == NULL) || (in_file == 0))
     {
       if (FD != NULL)
-	in_file = readdir(FD);
-
-      // Close and reopen when we run out of files...
-      // This essentially repeats the processing of the "in_dir" forever in an endless loop...
-      if ((in_file == NULL) || (in_file == 0))
-        {
-	  if (FD != NULL)
-	    {
-	      closedir(FD);
-	      //implement sleep command in ms here  
-	      sleepms(sleep_ms);
-	      FD = NULL;
-	    }
-	  if (NULL == (FD = opendir (in_dir))) 
-	    {
-	      fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
-	      return 1;
-	    }
-        }
-      else
-        {
-          /* On linux/Unix we don't want current and parent directories
+      {
+        closedir(FD);
+        //implement sleep command in ms here
+        sleepms(sleep_ms);
+        FD = NULL;
+      }
+      if (NULL == (FD = opendir(in_dir)))
+      {
+        fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
+        return 1;
+      }
+    }
+    else
+    {
+      /* On linux/Unix we don't want current and parent directories
            * On windows machine too, thanks Greg Hewgill
            */
-          if (!strcmp (in_file->d_name, "."))    // ignore the present working dir
-	    continue;
-          if (!strcmp (in_file->d_name, ".."))   // ignore the previous dir 
-	    continue;
+      if (!strcmp(in_file->d_name, ".")) // ignore the present working dir
+        continue;
+      if (!strcmp(in_file->d_name, "..")) // ignore the previous dir
+        continue;
 
-          // build an absolute path to the files in the "in_dir" for processing
-          char tmpfilename[FULLFILENAME];
-          sprintf(tmpfilename,"%s/%s/%s",cwd,in_dir,in_file->d_name);
-          printf("full path=%s\n",tmpfilename);
-          printf("Read file OPENING: '%s'\n",in_file->d_name);
+      // build an absolute path to the files in the "in_dir" for processing
+      char tmpfilename[FULLFILENAME];
+      sprintf(tmpfilename, "%s/%s/%s", cwd, in_dir, in_file->d_name);
+      printf("full path=%s\n", tmpfilename);
+      printf("Read file OPENING: '%s'\n", in_file->d_name);
 
-          // open one file at a time for processing
-          entry_file = fopen(tmpfilename, "rw");
-          if (entry_file == NULL)
-	    {
-              printf("Unable to open read file %s\n",in_file->d_name);
-              fprintf(stderr, "Error : Failed to open entry file - %s\n", strerror(errno));
-              return 1;
-	    }
-          printf("read file %s opened\n",in_file->d_name);
+      // open one file at a time for processing
+      entry_file = fopen(tmpfilename, "rw");
+      if (entry_file == NULL)
+      {
+        printf("Unable to open read file %s\n", in_file->d_name);
+        fprintf(stderr, "Error : Failed to open entry file - %s\n", strerror(errno));
+        return 1;
+      }
+      printf("read file %s opened\n", in_file->d_name);
 
-          /* Read command file - add command to bounded buffer */
-          while (fgets(buffer, BUFFSIZ, entry_file) != NULL)
-	    {
-              // remove newline from buffer string
-              strtok(buffer, "\n");
+      /* Read command file - add command to bounded buffer */
+      while (fgets(buffer, BUFFSIZ, entry_file) != NULL)
+      {
+        // remove newline from buffer string
+        strtok(buffer, "\n");
 #if OUTPUT
-              printf("read from command file='%s'\n",buffer);
+        printf("read from command file='%s'\n", buffer);
 #endif
 
-              //
-              // TO DO
-              //
-              // THE NEW COMMAND WILL BE IN "buffer"
-              printf("Read the command='%s'\n",buffer);
-              
-              // First make a copy of the string in the buffer
-	      //char* cmdStr = malloc(sizeof(char) * strlen(buffer) + 1);
-	      //strcpy(cmdStr, buffer);
-        //printf("Copied string: %s\n", cmdStr);
+        //
+        // TO DO
+        //
+        // THE NEW COMMAND WILL BE IN "buffer"
+        printf("Read the command='%s'\n", buffer);
 
-              // Add this copy to the bounded buffer for processing by consumer threads...
-              // Use of locks and condition variables and call to put() routine...
-/*         pthread_mutex_lock(&lock);
+        // First make a copy of the string in the buffer
+        char *cmdStr = malloc(sizeof(char) * strlen(buffer) + 1);
+        strcpy(cmdStr, buffer);
+        printf("Copied string: %s\n", cmdStr);
+
+        // Add this copy to the bounded buffer for processing by consumer threads...
+        // Use of locks and condition variables and call to put() routine...
+        pthread_mutex_lock(&lock);
         while (getCount() == getMax())
         {
           pthread_cond_wait(&empty, &lock);
         }
         put(cmdStr);
-	      pthread_cond_signal(&full);
-	      pthread_mutex_unlock(&lock); */
-					
+        pthread_cond_signal(&full);
+        pthread_mutex_unlock(&lock);
 
-	      /* When you finish with the file, close it */
-	      fclose(entry_file);
-	    }
-	}
-      // This function never returns as we continously process the "in_dir"...
-      return 0;
+        /* When you finish with the file, close it */
+      }
+      fclose(entry_file);
     }
+    // This function never returns as we continously process the "in_dir"...
+  }
+  return 0;
 }
 /*
  *  This is a helper routine which parses an int using strtok.

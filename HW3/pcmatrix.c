@@ -50,7 +50,7 @@ int main (int argc, char * argv[])
   printf("millisecond arg: %d\n", ms);
   
   // Uncomment to see example operation of the readtasks() routine
-  readtasks((void *)ms);  
+  //readtasks((void *)ms);  
 
   //Uncomment to see example operation of the dotasks() routine
   //dotasks((void *) NULL);
@@ -58,10 +58,10 @@ int main (int argc, char * argv[])
   // To do
   // Use pthreads
   // Create one pthread for readtasks()
-  //rc = pthread_create(&p1, NULL, producer, ms); assert(rc == 0);
+  rc = pthread_create(&p1, NULL, producer, ms); assert(rc == 0);
   //
   // Create one or more pthreads for dotasks()
 
-  //pthread_join(p1, NULL);
+  pthread_join(p1, NULL);
   return 0;
 }
