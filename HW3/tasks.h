@@ -21,6 +21,7 @@
 
 void *readtasks(void *arg);
 void *dotasks(void *arg);
+void sleepms(int milliseconds);
 
 typedef struct __task_t {
   char * name;

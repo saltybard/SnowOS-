@@ -9,6 +9,6 @@
  */
 
 #define OUTPUT 1
-
+void* producer(void* arg);
 
 

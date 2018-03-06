@@ -18,7 +18,7 @@
  *  TCSS 422 - Operating Systems
  *  Spring 2017
  */
-
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -85,7 +85,6 @@ typedef struct __task_t {
 // Implement sleep in ms 
 void sleepms(int milliseconds) 
 {
-  printf("%d\n", milliseconds);
   usleep(milliseconds * 1000);
   return;
 }
@@ -188,24 +187,24 @@ void *readtasks(void *arg)
               printf("Read the command='%s'\n",buffer);
               
               // First make a copy of the string in the buffer
-	      char* cmdStr;
-	      strcpy(cmdStr, buffer);
+	      //char* cmdStr = malloc(sizeof(char) * strlen(buffer) + 1);
+	      //strcpy(cmdStr, buffer);
+        //printf("Copied string: %s\n", cmdStr);
 
               // Add this copy to the bounded buffer for processing by consumer threads...
               // Use of locks and condition variables and call to put() routine...
-	      pthread_mutex_lock(&lock);
-	      while(getCount() == getMax()) {
-		pthread_cond_wait(&empty, &lock);
-	      }
-	      put(cmdStr);
+/*         pthread_mutex_lock(&lock);
+        while (getCount() == getMax())
+        {
+          pthread_cond_wait(&empty, &lock);
+        }
+        put(cmdStr);
 	      pthread_cond_signal(&full);
-	      pthread_mutex_unlock(&lock);
+	      pthread_mutex_unlock(&lock); */
 					
 
 	      /* When you finish with the file, close it */
 	      fclose(entry_file);
-	      //sleepms(sleep_ms); 
-
 	    }
 	}
       // This function never returns as we continously process the "in_dir"...

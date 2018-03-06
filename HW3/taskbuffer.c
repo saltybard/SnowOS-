@@ -19,7 +19,8 @@ int fill = 0;
 int use = 0; 
 int count = 0; 
 
-void put (char* value) { 
+void put (char* value) {
+  printf("putting value in buffer: %s\n", value); 
 	buffer[fill] = value; 
 	fill = (fill + 1) % MAX; 
 	count++;
@@ -29,6 +30,7 @@ char* get() {
   char* tmp = buffer[use];
   use = (use + 1) % MAX;
   count--;
+  printf("getting value from buffer: %s\n", tmp);
   return tmp;
 
 }
