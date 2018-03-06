@@ -34,6 +34,10 @@ void * producer(void *arg) {
 		return NULL;
 }
 
+void* consumer(void* arg) {
+  dotasks((void*) NULL);
+  return NULL;
+}
 
 int main (int argc, char * argv[])
 {
@@ -59,9 +63,13 @@ int main (int argc, char * argv[])
   // Use pthreads
   // Create one pthread for readtasks()
   rc = pthread_create(&p1, NULL, producer, ms); assert(rc == 0);
+  rc = pthread_create(&p2, NULL, consumer, NULL); assert(rc == 0);
+  rc = pthread_create(&p3, NULL, consumer, NULL); assert(rc == 0);
   //
   // Create one or more pthreads for dotasks()
 
   pthread_join(p1, NULL);
+  pthread_join(p2, NULL);
+  pthread_join(p3, NULL);
   return 0;
 }
