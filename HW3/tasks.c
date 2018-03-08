@@ -31,6 +31,7 @@
 #include <sys/time.h>
 #include "matrix.h"
 #include "taskbuffer.h"
+#include "tasks.h"
 
 
 // Maximum command filename length
@@ -73,13 +74,7 @@ pthread_cond_t empty = PTHREAD_COND_INITIALIZER;
 // row - number of rows
 // col - number of cols
 // ele - 1-makes every element one, 2-makes elements equal to the column number, 3 to 100- selects a random value up to 100
-typedef struct __task_t {
-  char * name;
-  char cmd;
-  int row;
-  int col;
-  int ele;
-} task_t;
+
 
 // TO DO
 // Implement sleep in ms 

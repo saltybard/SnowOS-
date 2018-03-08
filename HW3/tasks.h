@@ -19,14 +19,16 @@
  *  Spring 2017
  */
 
-void *readtasks(void *arg);
-void *dotasks(void *arg);
-void sleepms(int milliseconds);
-
 typedef struct __task_t {
   char * name;
-  char * cmd;
+  char cmd;
   int row;
   int col;
   int ele;
 } task_t;
+
+void *readtasks(void *arg);
+void *dotasks(void *arg);
+void sleepms(int milliseconds);
+
+
