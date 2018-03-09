@@ -44,7 +44,7 @@ int main (int argc, char * argv[])
   //variable to hold passed in millisecond argument
   int ms = 0;
 	int rc; 
-	pthread_t p1, p2, p3;
+	pthread_t p1, p2, p3, p4;
   if (argc == 2) {
     ms = strtol(argv[1], NULL,10); 
   } else {
@@ -65,11 +65,13 @@ int main (int argc, char * argv[])
   rc = pthread_create(&p1, NULL, producer, ms); assert(rc == 0);
   rc = pthread_create(&p2, NULL, consumer, NULL); assert(rc == 0);
   rc = pthread_create(&p3, NULL, consumer, NULL); assert(rc == 0);
+  rc = pthread_create(&p4, NULL, consumer, NULL); assert(rc ==0);
   //
   // Create one or more pthreads for dotasks()
 
   pthread_join(p1, NULL);
   pthread_join(p2, NULL);
   pthread_join(p3, NULL);
+  pthread_join(p4, NULL);
   return 0;
 }

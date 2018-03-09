@@ -306,15 +306,16 @@ void *dotasks(void * arg)
         DisplayMatrix(matrix,newtask->row, newtask->col, matrix_file);
         fclose(matrix_file);
         FreeMatrix(matrix,newtask->row,newtask->col);
+        printf("1\n");
         break;
       }
     case 'd':
       {
-	matrix = AllocMatrix(newtask->row,newtask->col);
-	GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
-	DisplayMatrix(matrix,newtask->row, newtask->col, stdout);
-	FreeMatrix(matrix,newtask->row,newtask->col);
-	break;
+        matrix = AllocMatrix(newtask->row,newtask->col);
+        GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
+        DisplayMatrix(matrix,newtask->row, newtask->col, stdout);
+        FreeMatrix(matrix,newtask->row,newtask->col);
+        break;
       }
     case 's':
       {
@@ -334,12 +335,12 @@ void *dotasks(void * arg)
     case 'a':
       {
         // Implement Average Command
-	char cwd[1024];
-	if (!(getcwd(cwd, sizeof(cwd)) != NULL))
+	      char cwd[1024];
+	      if (!(getcwd(cwd, sizeof(cwd)) != NULL))
           fprintf(stderr, "getcwd error\n");
-	matrix = AllocMatrix(newtask->row, newtask->col);
+	      matrix = AllocMatrix(newtask->row, newtask->col);
         GenMatrixType(matrix,newtask->row, newtask->col, newtask->ele);
-	char tmpfilename[FULLFILENAME];
+	      char tmpfilename[FULLFILENAME];
         sprintf(tmpfilename,"%s/%s/%s.avg",cwd,out_dir,newtask->name);
         matrix_file = fopen(tmpfilename, "w");
         fprintf(matrix_file,"avg element=%d\n",AvgElement(matrix,newtask->row,newtask->col)); 
